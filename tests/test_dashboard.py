@@ -51,6 +51,11 @@ def test_generate_svg_creates_file_and_core_tags(tmp_path: Path) -> None:
     svg = output.read_text(encoding="utf-8")
     assert "<svg" in svg
     assert "NavalForge — Dashboard Visual" in svg
+    assert "Vista esquemática da embarcação" in svg
+    assert "Vista lateral" in svg
+    assert "Vista superior" in svg
+    assert "L =" in svg
+    assert "B =" in svg
     assert "18.0" in svg
     assert "36.0" in svg
 
