@@ -27,6 +27,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--speed-end", type=float, default=36.0)
     parser.add_argument("--speed-step", type=float, default=2.0)
     parser.add_argument("--output", type=str, default="reports/navalforge_dashboard.html")
+    parser.add_argument("--svg-output", type=str, default="reports/navalforge_dashboard.svg")
     parser.add_argument("--export-png", action="store_true")
     parser.add_argument("--export-svg", action="store_true")
     return parser
@@ -66,7 +67,7 @@ def main() -> None:
 
     if args.export_svg:
         svg_path = generate_speed_sweep_svg(
-            output_path="reports/navalforge_dashboard.svg",
+            output_path=args.svg_output,
             length_m=args.length,
             beam_m=args.beam,
             target_speed_knots=args.speed,
