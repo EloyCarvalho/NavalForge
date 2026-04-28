@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
 from navalforge.visualization.dashboard import (
     export_html_to_png,
     generate_speed_sweep_dashboard,
+    generate_speed_sweep_svg,
 )
 
 
@@ -27,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--speed-step", type=float, default=2.0)
     parser.add_argument("--output", type=str, default="reports/navalforge_dashboard.html")
     parser.add_argument("--export-png", action="store_true")
+    parser.add_argument("--export-svg", action="store_true")
     return parser
 
 
@@ -58,6 +60,26 @@ def main() -> None:
             print()
             print("Imagem PNG criada em:")
             print(png_path)
+        else:
+            print()
+            print("Falha ao exportar PNG (Playwright pode não estar instalado neste ambiente).")
+
+    if args.export_svg:
+        svg_path = generate_speed_sweep_svg(
+            output_path="reports/navalforge_dashboard.svg",
+            length_m=args.length,
+            beam_m=args.beam,
+            target_speed_knots=args.speed,
+            passengers=args.passengers,
+            fuel_capacity_l=args.fuel,
+            material=args.material,
+            speed_start_knots=args.speed_start,
+            speed_end_knots=args.speed_end,
+            speed_step_knots=args.speed_step,
+        )
+        print()
+        print("Imagem SVG criada em:")
+        print(svg_path)
 
 
 if __name__ == "__main__":
