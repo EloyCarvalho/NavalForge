@@ -40,6 +40,11 @@ def test_generate_dashboard_contains_custom_inputs(tmp_path: Path) -> None:
     assert "420.0 L" in html
     assert "aluminum" in html
     assert "16.0 a 34.0 kn (passo 3.0 kn)" in html
+    assert "Score Técnico" in html
+    assert "Status" in html
+    assert "Diagnóstico técnico" in html
+    assert "Recomendações" in html
+    assert "Aprovado com atenção" in html
 
 
 def test_generate_svg_creates_file_and_core_tags(tmp_path: Path) -> None:
