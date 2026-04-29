@@ -414,7 +414,7 @@ def generate_speed_sweep_svg(
     powers = [item.required_power_kw for item in sweep_results]
     trims = [item.trim_deg for item in sweep_results]
 
-    width, height = 1800, 1200
+    width, height = 1800, 1400
     background = "#f3f6fb"
     card_bg = "#ffffff"
     border = "#d6dfeb"
@@ -436,20 +436,23 @@ def generate_speed_sweep_svg(
         f"Combustível: {fuel_capacity_l:.1f} L",
         f"Material: {material}",
     ]
+    evaluation = baseline_result.get("evaluation", {})
+    status_label = str(evaluation.get("status_label", "-"))
+    score_text = f"{evaluation.get('overall_score', 0.0):.0f}/100"
+    evaluation_summary = str(evaluation.get("evaluation_summary", "Sem resumo técnico disponível."))
+    diagnostics = evaluation.get("diagnostics", [])[:3]
+    recommendations = _collect_recommendations(evaluation)[:5]
+    status_value_color, status_bg = _status_style(str(evaluation.get("status", "")))
     kpi_cards = [
-        ("Deslocamento estimado", f"{baseline_result['estimated_weight_kg']:.1f} kg", False),
-        ("Resistência total", f"{baseline_result['resistance_n']:.1f} N", False),
-        ("Potência requerida", f"{baseline_result['power_kw']:.1f} kW", baseline_result["power_kw"] > 600.0),
-        ("Trim previsto", f"{baseline_result['trim_deg']:.2f} deg", baseline_result["trim_deg"] > 6.0),
-        (
-            "Warnings",
-            f"{total_warnings} ({power_warn_count} potência / {trim_warn_count} trim)",
-            total_warnings > 0,
-        ),
+        ("Score Técnico", score_text, False, "#1e3a8a", "#dbeafe"),
+        ("Status", status_label, False, status_value_color, status_bg),
+        ("Potência requerida", f"{baseline_result['power_kw']:.1f} kW", baseline_result["power_kw"] > 600.0, None, None),
+        ("Trim previsto", f"{baseline_result['trim_deg']:.2f} deg", baseline_result["trim_deg"] > 6.0, None, None),
+        ("Warnings", f"{total_warnings} ({power_warn_count} potência / {trim_warn_count} trim)", total_warnings > 0, None, None),
     ]
 
-    power_x0, power_y0, power_w, power_h = 40, 700, 850, 250
-    trim_x0, trim_y0, trim_w, trim_h = 910, 700, 850, 250
+    power_x0, power_y0, power_w, power_h = 40, 1000, 850, 250
+    trim_x0, trim_y0, trim_w, trim_h = 910, 1000, 850, 250
 
     x_min = min(speeds)
     x_max = max(speeds)
@@ -482,13 +485,13 @@ def generate_speed_sweep_svg(
         status_color = status_colors.get(item.status, text_muted)
         table_rows.append(
             "<g>"
-            f"<rect x='910' y='{1015 + idx * 17}' width='850' height='17' fill='{row_bg}' stroke='{border}' />"
-            f"<text x='930' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.speed_knots:.1f}</text>"
-            f"<text x='1060' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.required_power_kw:.1f}</text>"
-            f"<text x='1210' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.trim_deg:.2f}</text>"
-            f"<text x='1320' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.score:.1f}</text>"
-            f"<text x='1410' y='{1028 + idx * 17}' font-size='13' fill='{status_color}'>{escape(item.status_label)}</text>"
-            f"<text x='1570' y='{1028 + idx * 17}' font-size='13' fill='{red if alert == 'ALERTA' else text_muted}'>{alert}</text>"
+            f"<rect x='40' y='{1298 + idx * 24}' width='1720' height='24' fill='{row_bg}' stroke='{border}' />"
+            f"<text x='70' y='{1315 + idx * 24}' font-size='16' fill='{text_dark}'>{item.speed_knots:.1f}</text>"
+            f"<text x='270' y='{1315 + idx * 24}' font-size='16' fill='{text_dark}'>{item.required_power_kw:.1f}</text>"
+            f"<text x='500' y='{1315 + idx * 24}' font-size='16' fill='{text_dark}'>{item.trim_deg:.2f}</text>"
+            f"<text x='670' y='{1315 + idx * 24}' font-size='16' fill='{text_dark}'>{item.score:.1f}</text>"
+            f"<text x='850' y='{1315 + idx * 24}' font-size='16' fill='{status_color}'>{escape(item.status_label)}</text>"
+            f"<text x='1170' y='{1315 + idx * 24}' font-size='16' fill='{red if alert == 'ALERTA' else text_muted}'>{alert}</text>"
             "</g>"
         )
 
@@ -496,22 +499,22 @@ def generate_speed_sweep_svg(
     trim_alert_y = _scale_point(6.0, trim_min, trim_max, trim_y0 + trim_h - 40, trim_y0 + 25)
 
     mission_text = "".join(
-        f"<text x='70' y='{205 + idx * 33}' font-size='25' fill='{text_dark}'>{escape(line)}</text>"
+        f"<text x='60' y='{188 + idx * 15}' font-size='13' fill='{text_dark}'>{escape(line)}</text>"
         for idx, line in enumerate(mission_lines)
     )
     kpi_text = "".join(
         (
-            f"<rect x='{580 + idx * 236}' y='120' width='220' height='130' rx='14' fill='{card_bg}' stroke='{border}' />"
-            f"<text x='{595 + idx * 236}' y='165' font-size='20' fill='{text_muted}'>{escape(title)}</text>"
-            f"<text x='{595 + idx * 236}' y='208' font-size='30' font-weight='700' fill='{red if is_alert else blue}'>"
+            f"<rect x='{310 + idx * 290}' y='120' width='270' height='170' rx='16' fill='{status_fill or card_bg}' stroke='{border}' />"
+            f"<text x='{330 + idx * 290}' y='172' font-size='28' font-weight='700' fill='{text_muted}'>{escape(title)}</text>"
+            f"<text x='{330 + idx * 290}' y='235' font-size='34' font-weight='700' fill='{status_text or (red if is_alert else blue)}'>"
             f"{escape(value)}</text>"
         )
-        for idx, (title, value, is_alert) in enumerate(kpi_cards)
+        for idx, (title, value, is_alert, status_text, status_fill) in enumerate(kpi_cards)
     )
 
-    boat_x, boat_y, boat_w, boat_h = 40, 350, 1720, 320
-    side_x, side_y, side_w, side_h = 60, 390, 820, 250
-    top_x, top_y, top_w, top_h = 910, 390, 820, 250
+    boat_x, boat_y, boat_w, boat_h = 40, 320, 1720, 300
+    side_x, side_y, side_w, side_h = 60, 360, 820, 230
+    top_x, top_y, top_w, top_h = 910, 360, 820, 230
     pixels_per_meter = min(
         (side_w - 120) / max(length_m, 0.1),
         (top_w - 120) / max(length_m, 0.1),
@@ -522,7 +525,25 @@ def generate_speed_sweep_svg(
         f"<text x='70' y='386' font-size='30' font-weight='700' fill='{text_dark}'>Vista esquemática da embarcação</text>"
         f"{_draw_boat_side_view(side_x, side_y, side_w, side_h, length_m, beam_m, pixels_per_meter)}"
         f"{_draw_boat_top_view(top_x, top_y, top_w, top_h, length_m, beam_m, pixels_per_meter)}"
-        f"{_draw_scale_bar(80, 646, pixels_per_meter)}"
+        f"{_draw_scale_bar(80, 598, pixels_per_meter)}"
+    )
+    diagnostics_text = [
+        f"Resumo: {evaluation_summary}",
+        *[
+            f"{str(item.get('severity', '-')).upper()} · {str(item.get('title', '-'))} — {str(item.get('recommendation', '-'))}"
+            for item in diagnostics
+        ],
+    ]
+    if len(diagnostics_text) < 3:
+        diagnostics_text.append("Sem diagnósticos adicionais.")
+    recommendations_text = recommendations or ["Sem recomendações adicionais."]
+    diagnostics_svg = "".join(
+        f"<text x='70' y='{712 + i * 36}' font-size='21' fill='{text_dark}'>• {escape(line)}</text>"
+        for i, line in enumerate(diagnostics_text[:4])
+    )
+    recommendations_svg = "".join(
+        f"<text x='930' y='{712 + i * 36}' font-size='21' fill='{text_dark}'>• {escape(line)}</text>"
+        for i, line in enumerate(recommendations_text[:5])
     )
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
@@ -530,10 +551,10 @@ def generate_speed_sweep_svg(
   <text x="40" y="60" font-size="46" font-weight="700" fill="{text_dark}">NavalForge — Dashboard Visual</text>
   <text x="40" y="95" font-size="24" fill="{text_muted}">Missão → Peso → Hidrodinâmica → Potência → Alertas</text>
 
-  <rect x="40" y="120" width="520" height="210" rx="16" fill="{card_bg}" stroke="{border}" />
-  <text x="70" y="165" font-size="32" font-weight="700" fill="{text_dark}">Missão de entrada</text>
+  <rect x="40" y="120" width="250" height="170" rx="16" fill="{card_bg}" stroke="{border}" />
+  <text x="60" y="162" font-size="30" font-weight="700" fill="{text_dark}">Missão de entrada</text>
   {mission_text}
-  <text x="70" y="318" font-size="20" fill="{text_muted}">Sweep: {speed_start_knots:.1f} → {speed_end_knots:.1f} kn (passo {speed_step_knots:.1f})</text>
+  <text x="60" y="286" font-size="18" fill="{text_muted}">Sweep: {speed_start_knots:.1f} → {speed_end_knots:.1f} kn</text>
 
   {kpi_text}
   {boat_section}
@@ -560,23 +581,24 @@ def generate_speed_sweep_svg(
   <text x="{trim_x0 + 42}" y="{trim_y0 + trim_h - 12}" font-size="17" fill="{text_muted}">Velocidade (kn)</text>
   <text x="{trim_x0 + 45}" y="{trim_y0 + 65}" font-size="17" fill="{text_muted}">Trim (deg)</text>
 
-  <rect x="910" y="960" width="850" height="220" rx="14" fill="{card_bg}" stroke="{border}" />
-  <text x="940" y="995" font-size="26" font-weight="700" fill="{text_dark}">Tabela resumida do speed sweep</text>
-  <rect x="910" y="1005" width="850" height="17" fill="#eff4ff" stroke="{border}" />
-  <text x="930" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Velocidade (kn)</text>
-  <text x="1060" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Potência (kW)</text>
-  <text x="1210" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Trim (deg)</text>
-  <text x="1320" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Score</text>
-  <text x="1410" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Status</text>
-  <text x="1570" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Alerta</text>
-  {''.join(table_rows)}
+  <rect x="40" y="650" width="850" height="300" rx="14" fill="{card_bg}" stroke="{border}" />
+  <text x="70" y="692" font-size="34" font-weight="700" fill="{text_dark}">Diagnóstico técnico</text>
+  {diagnostics_svg}
 
-  <rect x="40" y="960" width="850" height="220" rx="14" fill="{card_bg}" stroke="{border}" />
-  <text x="70" y="998" font-size="30" font-weight="700" fill="{text_dark}">Leitura de Engenharia</text>
-  <text x="70" y="1040" font-size="24" fill="{text_dark}">• Faixa mais razoável desta configuração: 26–30 nós</text>
-  <text x="70" y="1074" font-size="24" fill="{text_dark}">• Acima de 32 nós, a potência requerida entra em alerta</text>
-  <text x="70" y="1108" font-size="24" fill="{text_dark}">• Em 34–36 nós, o trim também sai da faixa preferida</text>
-  <text x="70" y="1142" font-size="24" fill="{text_dark}">• Conclusão preliminar: revisar peso, casco ou missão para velocidades mais altas</text>
+  <rect x="910" y="650" width="850" height="300" rx="14" fill="{card_bg}" stroke="{border}" />
+  <text x="940" y="692" font-size="34" font-weight="700" fill="{text_dark}">Recomendações</text>
+  {recommendations_svg}
+
+  <rect x="40" y="1260" width="1720" height="130" rx="14" fill="{card_bg}" stroke="{border}" />
+  <text x="70" y="1290" font-size="30" font-weight="700" fill="{text_dark}">Tabela resumida do speed sweep</text>
+  <rect x="40" y="1298" width="1720" height="24" fill="#eff4ff" stroke="{border}" />
+  <text x="70" y="1315" font-size="15" font-weight="700" fill="{text_dark}">Velocidade (kn)</text>
+  <text x="270" y="1315" font-size="15" font-weight="700" fill="{text_dark}">Potência (kW)</text>
+  <text x="500" y="1315" font-size="15" font-weight="700" fill="{text_dark}">Trim (deg)</text>
+  <text x="670" y="1315" font-size="15" font-weight="700" fill="{text_dark}">Score</text>
+  <text x="850" y="1315" font-size="15" font-weight="700" fill="{text_dark}">Status</text>
+  <text x="1170" y="1315" font-size="15" font-weight="700" fill="{text_dark}">Alerta</text>
+  {''.join(table_rows)}
 </svg>
 """
 

@@ -63,6 +63,11 @@ def test_generate_svg_creates_file_and_core_tags(tmp_path: Path) -> None:
     assert "B =" in svg
     assert "18.0" in svg
     assert "36.0" in svg
+    assert "Score Técnico" in svg
+    assert "Status" in svg
+    assert "Diagnóstico técnico" in svg
+    assert "Recomendações" in svg
+    assert "Aprovado com atenção" in svg
 
 
 def test_generate_svg_contains_custom_parameters(tmp_path: Path) -> None:
@@ -88,4 +93,4 @@ def test_generate_svg_contains_custom_parameters(tmp_path: Path) -> None:
     assert "Passageiros: 10" in svg
     assert "410.0 L" in svg
     assert "Material: aluminum" in svg
-    assert "20.0 → 38.0 kn (passo 2.0)" in svg
+    assert "Sweep: 20.0 → 38.0 kn" in svg
