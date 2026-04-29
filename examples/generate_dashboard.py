@@ -26,17 +26,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--speed-start", type=float, default=18.0)
     parser.add_argument("--speed-end", type=float, default=36.0)
     parser.add_argument("--speed-step", type=float, default=2.0)
-    parser.add_argument("--output", type=str, default="reports/navalforge_dashboard.html")
-    parser.add_argument("--svg-output", type=str, default="reports/navalforge_dashboard.svg")
+    parser.add_argument("--output", type=str, default="reports/navalforge_dashboard.svg")
+    parser.add_argument("--html-output", type=str, default="reports/navalforge_dashboard.html")
     parser.add_argument("--export-png", action="store_true")
-    parser.add_argument("--export-svg", action="store_true")
+    parser.add_argument("--export-html", action="store_true")
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
 
-    output_path = generate_speed_sweep_dashboard(
+    output_path = generate_speed_sweep_svg(
         output_path=args.output,
         length_m=args.length,
         beam_m=args.beam,
@@ -49,15 +49,26 @@ def main() -> None:
         speed_step_knots=args.speed_step,
     )
 
-    print("Dashboard HTML criado em:")
+    print("Dashboard SVG criado em:")
     print(output_path)
     print()
-    print("Para abrir:")
-    print("abra o arquivo no navegador")
+    print("Para abrir: use um navegador ou editor vetorial compatível com SVG.")
 
     if args.export_png:
         png_path = "reports/navalforge_dashboard.png"
-        if export_html_to_png(output_path, png_path):
+        html_path = generate_speed_sweep_dashboard(
+            output_path=args.html_output,
+            length_m=args.length,
+            beam_m=args.beam,
+            target_speed_knots=args.speed,
+            passengers=args.passengers,
+            fuel_capacity_l=args.fuel,
+            material=args.material,
+            speed_start_knots=args.speed_start,
+            speed_end_knots=args.speed_end,
+            speed_step_knots=args.speed_step,
+        )
+        if export_html_to_png(html_path, png_path):
             print()
             print("Imagem PNG criada em:")
             print(png_path)
@@ -65,9 +76,9 @@ def main() -> None:
             print()
             print("Falha ao exportar PNG (Playwright pode não estar instalado neste ambiente).")
 
-    if args.export_svg:
-        svg_path = generate_speed_sweep_svg(
-            output_path=args.svg_output,
+    if args.export_html:
+        html_path = generate_speed_sweep_dashboard(
+            output_path=args.html_output,
             length_m=args.length,
             beam_m=args.beam,
             target_speed_knots=args.speed,
@@ -79,8 +90,8 @@ def main() -> None:
             speed_step_knots=args.speed_step,
         )
         print()
-        print("Imagem SVG criada em:")
-        print(svg_path)
+        print("Dashboard HTML criado em:")
+        print(html_path)
 
 
 if __name__ == "__main__":
