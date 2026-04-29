@@ -283,6 +283,8 @@ def generate_speed_sweep_dashboard(
         <th>Potência (kW)</th>
         <th>Resistência (N)</th>
         <th>Trim (deg)</th>
+        <th>Score</th>
+        <th>Status</th>
         <th>Warnings</th>
       </tr>
     </thead>
@@ -368,6 +370,7 @@ def generate_speed_sweep_svg(
     red = "#dc2626"
 
     power_warn_count = sum(1 for item in sweep_results if item.required_power_kw > 600.0)
+    status_colors = {"approved": "#16a34a", "approved_with_attention": "#f59e0b", "warning": "#f97316", "rejected": "#dc2626", "not_converged": "#6b7280"}
     trim_warn_count = sum(1 for item in sweep_results if item.trim_deg > 6.0)
     total_warnings = sum(len(item.warnings) for item in sweep_results)
 
@@ -422,13 +425,16 @@ def generate_speed_sweep_svg(
 
         row_bg = "#fff1f2" if (item.required_power_kw > 600.0 or item.trim_deg > 6.0) else "#ffffff"
         alert = "ALERTA" if item.warnings else "-"
+        status_color = status_colors.get(item.status, text_muted)
         table_rows.append(
             "<g>"
             f"<rect x='910' y='{1015 + idx * 17}' width='850' height='17' fill='{row_bg}' stroke='{border}' />"
             f"<text x='930' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.speed_knots:.1f}</text>"
             f"<text x='1060' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.required_power_kw:.1f}</text>"
             f"<text x='1210' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.trim_deg:.2f}</text>"
-            f"<text x='1320' y='{1028 + idx * 17}' font-size='12' fill='{red if alert == 'ALERTA' else text_muted}'>{alert}</text>"
+            f"<text x='1320' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.score:.1f}</text>"
+            f"<text x='1410' y='{1028 + idx * 17}' font-size='12' fill='{status_color}'>{escape(item.status_label)}</text>"
+            f"<text x='1570' y='{1028 + idx * 17}' font-size='12' fill='{red if alert == 'ALERTA' else text_muted}'>{alert}</text>"
             "</g>"
         )
 
@@ -506,7 +512,9 @@ def generate_speed_sweep_svg(
   <text x="930" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Velocidade (kn)</text>
   <text x="1060" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Potência (kW)</text>
   <text x="1210" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Trim (deg)</text>
-  <text x="1320" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Alerta</text>
+  <text x="1320" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Score</text>
+  <text x="1410" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Status</text>
+  <text x="1570" y="1018" font-size="12" font-weight="700" fill="{text_dark}">Alerta</text>
   {''.join(table_rows)}
 
   <rect x="40" y="960" width="850" height="220" rx="14" fill="{card_bg}" stroke="{border}" />

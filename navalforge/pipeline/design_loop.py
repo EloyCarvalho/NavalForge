@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from navalforge.evaluation import evaluate_design_result
 from navalforge.hydrodynamics import PlaningHullInput, SavitskyModel
 
 FUEL_DENSITY_KG_L = 0.74
@@ -66,10 +67,31 @@ class DesignLoop:
                 f"Trim angle outside preferred range (2.5-6.0 deg): {trim:.2f} deg."
             )
 
+        evaluation = evaluate_design_result(
+            required_power_kw=hydro_result["power_kw"],
+            trim_deg=trim,
+            warnings=warnings,
+            target_speed_knots=mission.target_speed_knots,
+        )
+
         return {
             "estimated_weight_kg": estimated_weight_kg,
             "resistance_n": hydro_result["resistance_n"],
             "power_kw": hydro_result["power_kw"],
             "trim_deg": trim,
             "warnings": warnings,
+            "score": evaluation.score,
+            "status": evaluation.status,
+            "status_label": evaluation.status_label,
+            "evaluation_summary": evaluation.summary,
+            "recommendations": evaluation.recommendations,
+            "diagnostics": [
+                {
+                    "severity": diag.severity,
+                    "title": diag.title,
+                    "message": diag.message,
+                    "recommendation": diag.recommendation,
+                }
+                for diag in evaluation.diagnostics
+            ],
         }

@@ -15,6 +15,9 @@ class SpeedSweepResult:
     required_power_kw: float
     trim_deg: float
     warnings: list[str]
+    score: float
+    status: str
+    status_label: str
 
 
 def run_speed_sweep(
@@ -48,6 +51,9 @@ def run_speed_sweep(
                 required_power_kw=float(raw["power_kw"]),
                 trim_deg=float(raw["trim_deg"]),
                 warnings=list(raw["warnings"]),
+                score=float(raw["score"]),
+                status=str(raw["status"]),
+                status_label=str(raw["status_label"]),
             )
         )
         speed += speed_step_knots

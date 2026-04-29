@@ -19,29 +19,17 @@ def main() -> None:
         material="fiberglass",
     )
 
-    results = run_speed_sweep(
-        base_mission=mission,
-        speed_start_knots=18.0,
-        speed_end_knots=36.0,
-        speed_step_knots=2.0,
-    )
+    results = run_speed_sweep(mission, 18.0, 36.0, 2.0)
 
     print("=== NavalForge Speed Sweep ===")
-    print(
-        f"{'speed_knots':>11} | {'estimated_displacement_kg':>25} | {'resistance_n':>12} | "
-        f"{'required_power_kw':>17} | {'trim_deg':>8} | warnings"
-    )
-    print("-" * 110)
+    print(f"{'speed_knots':>11} | {'power':>8} | {'trim':>8} | {'score':>7} | {'status':>22} | warnings")
+    print("-" * 130)
 
     for row in results:
         warnings = "; ".join(row.warnings) if row.warnings else "none"
         print(
-            f"{row.speed_knots:11.1f} | "
-            f"{row.estimated_displacement_kg:25.1f} | "
-            f"{row.resistance_n:12.1f} | "
-            f"{row.required_power_kw:17.1f} | "
-            f"{row.trim_deg:8.2f} | "
-            f"{warnings}"
+            f"{row.speed_knots:11.1f} | {row.required_power_kw:8.1f} | {row.trim_deg:8.2f} | "
+            f"{row.score:7.1f} | {row.status_label:22} | {warnings}"
         )
 
 
