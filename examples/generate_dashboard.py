@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,6 +14,40 @@ from navalforge.visualization.dashboard import (
     generate_speed_sweep_dashboard,
     generate_speed_sweep_svg,
 )
+
+
+def _fix_svg_canvas_height(svg_path: str, bottom_padding_px: int = 60) -> None:
+    """Ajusta a altura do SVG para evitar corte do conteúdo renderizado.
+
+    O dashboard SVG possui elementos posicionados manualmente. Quando a tabela
+    tem muitas linhas, alguns elementos podem passar da altura fixa original.
+    Esta função calcula o maior valor de `y` encontrado e atualiza `height` e
+    `viewBox` do SVG automaticamente.
+    """
+    path = Path(svg_path)
+    if not path.exists():
+        return
+
+    svg = path.read_text(encoding="utf-8")
+    y_values = [float(match) for match in re.findall(r"\by=['\"]([0-9]+(?:\.[0-9]+)?)['\"]", svg)]
+    y_values += [float(match) for match in re.findall(r"\by=\"([0-9]+(?:\.[0-9]+)?)\"", svg)]
+
+    if not y_values:
+        return
+
+    required_height = int(max(y_values) + bottom_padding_px)
+    current_height_match = re.search(r"<svg[^>]*\bheight=\"([0-9]+)\"", svg)
+    current_height = int(current_height_match.group(1)) if current_height_match else 0
+    new_height = max(current_height, required_height)
+
+    svg = re.sub(r"height=\"[0-9]+\"", f"height=\"{new_height}\"", svg, count=1)
+    svg = re.sub(
+        r"viewBox=\"0 0 ([0-9]+) [0-9]+\"",
+        rf"viewBox=\"0 0 \1 {new_height}\"",
+        svg,
+        count=1,
+    )
+    path.write_text(svg, encoding="utf-8")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -28,6 +63,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--speed-step", type=float, default=2.0)
     parser.add_argument("--output", type=str, default="reports/navalforge_dashboard.svg")
     parser.add_argument("--html-output", type=str, default="reports/navalforge_dashboard.html")
+    parser.add_argument(
+        "--export-svg",
+        action="store_true",
+        help="Compatibilidade: o SVG já é gerado por padrão.",
+    )
     parser.add_argument("--export-png", action="store_true")
     parser.add_argument("--export-html", action="store_true")
     return parser
@@ -48,6 +88,7 @@ def main() -> None:
         speed_end_knots=args.speed_end,
         speed_step_knots=args.speed_step,
     )
+    _fix_svg_canvas_height(output_path)
 
     print("Dashboard SVG criado em:")
     print(output_path)
