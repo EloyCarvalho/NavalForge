@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from html import escape
+from typing import Any
 from pathlib import Path
 
 from navalforge.analysis import run_speed_sweep
@@ -181,6 +182,36 @@ def _draw_boat_top_view(
     )
 
 
+
+
+def _status_style(status: str) -> tuple[str, str]:
+    palette = {
+        "approved": ("#166534", "#dcfce7"),
+        "approved_with_attention": ("#9a3412", "#fef3c7"),
+        "warning": ("#c2410c", "#ffedd5"),
+        "rejected": ("#991b1b", "#fee2e2"),
+        "not_converged": ("#374151", "#e5e7eb"),
+    }
+    return palette.get(status, ("#334155", "#e2e8f0"))
+
+
+def _collect_recommendations(evaluation: dict[str, Any]) -> list[str]:
+    recommendations = evaluation.get("recommendations", [])
+    if recommendations:
+        return [str(item) for item in recommendations[:5]]
+    diagnostics = evaluation.get("diagnostics", [])
+    recs = [str(item.get("recommendation", "")).strip() for item in diagnostics if item.get("recommendation")]
+    return recs[:5]
+
+
+def _render_diagnostics_html(evaluation: dict[str, Any]) -> str:
+    diagnostics = evaluation.get("diagnostics", [])[:5]
+    if not diagnostics:
+        return "<li>Sem diagnósticos relevantes.</li>"
+    return "".join(
+        f"<li><strong>{escape(str(item.get('severity', '-'))).upper()}</strong> · {escape(str(item.get('title', '-')))} — {escape(str(item.get('recommendation', '-')))}</li>"
+        for item in diagnostics
+    )
 def generate_speed_sweep_dashboard(
     output_path: str = "reports/navalforge_dashboard.html",
     length_m: float = 8.0,
@@ -222,11 +253,21 @@ def generate_speed_sweep_dashboard(
             f"<td>{item.required_power_kw:.1f}</td>"
             f"<td>{item.resistance_n:.1f}</td>"
             f"<td>{item.trim_deg:.2f}</td>"
+            f"<td>{item.score:.1f}</td>"
+            f"<td>{escape(item.status_label)}</td>"
             f"<td>{escape('; '.join(item.warnings)) if item.warnings else '-'}</td>"
             "</tr>"
         )
         for item in sweep_results
     )
+
+    evaluation = baseline_result.get("evaluation", {})
+    status_label = str(evaluation.get("status_label", "-"))
+    status_color, status_bg = _status_style(str(evaluation.get("status", "")))
+    diagnostics_html = _render_diagnostics_html(evaluation)
+    recommendations = _collect_recommendations(evaluation)
+    recommendations_html = "".join(f"<li>{escape(item)}</li>" for item in recommendations) or "<li>Sem recomendações adicionais.</li>"
+    warning_total = len(baseline_result.get("warnings", [])) + len(evaluation.get("warnings", []))
 
     html = f"""<!doctype html>
 <html lang=\"pt-BR\">
@@ -268,9 +309,22 @@ def generate_speed_sweep_dashboard(
 
   <h2>Resultado na velocidade alvo</h2>
   <div class=\"stats\">
-    <div class=\"stat\"><strong>Deslocamento estimado</strong><span>{baseline_result['estimated_weight_kg']:.1f} kg</span></div>
-    <div class=\"stat\"><strong>Resistência</strong><span>{baseline_result['resistance_n']:.1f} N</span></div>
+    <div class=\"stat\"><strong>Score Técnico</strong><span>{evaluation.get("overall_score", 0.0):.1f}</span></div>
+    <div class=\"stat\" style=\"background:{status_bg};color:{status_color};border-color:{status_color};\"><strong>Status</strong><span>{escape(status_label)}</span></div>
     <div class=\"stat\"><strong>Potência requerida</strong><span>{baseline_result['power_kw']:.1f} kW</span></div>
+    <div class=\"stat\"><strong>Trim previsto</strong><span>{baseline_result['trim_deg']:.2f} deg</span></div>
+    <div class=\"stat\"><strong>Warnings</strong><span>{warning_total}</span></div>
+  </div>
+
+  <div class=\"section\">
+    <h2>Diagnóstico técnico</h2>
+    <p>{escape(str(evaluation.get("evaluation_summary", "Sem resumo técnico.")))}</p>
+    <ul>{diagnostics_html}</ul>
+  </div>
+
+  <div class=\"section\">
+    <h2>Recomendações</h2>
+    <ul>{recommendations_html}</ul>
   </div>
 
   <div id=\"chart\"></div>
@@ -423,18 +477,18 @@ def generate_speed_sweep_svg(
         point_marks.append(f"<circle cx='{px:.2f}' cy='{py:.2f}' r='4' fill='{point_color}' />")
         trim_marks.append(f"<circle cx='{tx:.2f}' cy='{ty:.2f}' r='4' fill='{trim_color}' />")
 
-        row_bg = "#fff1f2" if (item.required_power_kw > 600.0 or item.trim_deg > 6.0) else "#ffffff"
+        row_bg = "#fee2e2" if item.status == "rejected" else ("#ffedd5" if item.status in {"warning", "approved_with_attention"} else "#ffffff")
         alert = "ALERTA" if item.warnings else "-"
         status_color = status_colors.get(item.status, text_muted)
         table_rows.append(
             "<g>"
             f"<rect x='910' y='{1015 + idx * 17}' width='850' height='17' fill='{row_bg}' stroke='{border}' />"
-            f"<text x='930' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.speed_knots:.1f}</text>"
-            f"<text x='1060' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.required_power_kw:.1f}</text>"
-            f"<text x='1210' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.trim_deg:.2f}</text>"
-            f"<text x='1320' y='{1028 + idx * 17}' font-size='12' fill='{text_dark}'>{item.score:.1f}</text>"
-            f"<text x='1410' y='{1028 + idx * 17}' font-size='12' fill='{status_color}'>{escape(item.status_label)}</text>"
-            f"<text x='1570' y='{1028 + idx * 17}' font-size='12' fill='{red if alert == 'ALERTA' else text_muted}'>{alert}</text>"
+            f"<text x='930' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.speed_knots:.1f}</text>"
+            f"<text x='1060' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.required_power_kw:.1f}</text>"
+            f"<text x='1210' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.trim_deg:.2f}</text>"
+            f"<text x='1320' y='{1028 + idx * 17}' font-size='13' fill='{text_dark}'>{item.score:.1f}</text>"
+            f"<text x='1410' y='{1028 + idx * 17}' font-size='13' fill='{status_color}'>{escape(item.status_label)}</text>"
+            f"<text x='1570' y='{1028 + idx * 17}' font-size='13' fill='{red if alert == 'ALERTA' else text_muted}'>{alert}</text>"
             "</g>"
         )
 
