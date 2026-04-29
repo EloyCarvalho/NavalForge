@@ -24,6 +24,17 @@ print(f"Estimated displacement : {result['estimated_weight_kg']:.1f} kg")
 print(f"Total resistance      : {result['resistance_n']:.1f} N")
 print(f"Required shaft power  : {result['power_kw']:.1f} kW")
 print(f"Predicted trim angle  : {result['trim_deg']:.2f} deg")
+print(f"Technical score       : {result['score']:.1f}")
+print(f"Status                : {result['status_label']}")
+print(f"Summary               : {result['evaluation_summary']}")
+
+print("Recommendations:")
+for recommendation in result["recommendations"]:
+    print(f" - {recommendation}")
+
+print("Diagnostics:")
+for diagnostic in result["diagnostics"]:
+    print(f" - [{diagnostic['severity']}] {diagnostic['title']}: {diagnostic['message']}")
 
 if result["warnings"]:
     print("Warnings:")
