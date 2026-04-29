@@ -52,10 +52,23 @@ class SavitskyModel:
         lift_coeff = data.displacement_kg * GRAVITY / (dynamic_pressure * wetted_area)
 
         resistance_coeff = 0.0058 + 0.0015 * froude_beam + 0.00008 * data.deadrise_deg
-        # Add a lightweight load term to preserve monotonic behavior with displacement
-        # in this preliminary model (not a full Savitsky implementation).
-        load_factor = 1.0 + 0.65 * lift_coeff
-        resistance_n = resistance_coeff * dynamic_pressure * wetted_area * load_factor
+        # Preliminary loading correction (still not a full Savitsky implementation):
+        # - Increase drag sensitivity above a reference lift coefficient.
+        # - Add a mild displacement scaling referenced to hull dimensions.
+        reference_cl = 0.012
+        lift_penalty_gain = 10.0
+        load_factor = 1.0 + lift_penalty_gain * max(lift_coeff - reference_cl, 0.0)
+
+        reference_displacement_kg = WATER_DENSITY * data.length_m * (data.beam_m**2) * 0.12
+        displacement_factor = max(0.8, (data.displacement_kg / reference_displacement_kg) ** 0.25)
+
+        resistance_n = (
+            resistance_coeff
+            * dynamic_pressure
+            * wetted_area
+            * load_factor
+            * displacement_factor
+        )
 
         effective_power_w = resistance_n * speed_mps
         shaft_power_w = effective_power_w / 0.62

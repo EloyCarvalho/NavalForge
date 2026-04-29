@@ -18,8 +18,10 @@ def determine_status(
         return NOT_CONVERGED
 
     if score >= 80 and not warnings:
+        if required_power_kw >= 300:
+            return APPROVED_WITH_ATTENTION
         return APPROVED
-    if score >= 70 and warnings:
+    if score >= 70:
         return APPROVED_WITH_ATTENTION
     if score >= 50:
         return WARNING
