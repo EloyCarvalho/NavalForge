@@ -22,7 +22,7 @@ def _build_scenarios() -> list[tuple[str, MissionInput]]:
 
 def _print_scenario_result(name: str, result: dict) -> None:
     print(f"\n=== {name} ===")
-    print(f"Deslocamento estimado: {result['estimated_weight_kg']:.1f} kg")
+    print(f"Deslocamento estimado: {result['estimated_displacement_kg']:.1f} kg")
     print(f"Potência requerida: {result['power_kw']:.1f} kW")
     print(f"Trim: {result['trim_deg']:.2f} deg")
     print(f"Score: {result['score']:.1f}")
