@@ -12,3 +12,4 @@ def test_heavier_displacement_increases_hydrodynamic_outputs() -> None:
     assert heavy_result["lift_coeff"] > light_result["lift_coeff"]
     assert heavy_result["resistance_n"] > light_result["resistance_n"]
     assert heavy_result["effective_power_kw"] > light_result["effective_power_kw"]
+    assert heavy_result["effective_power_kw"] >= light_result["effective_power_kw"] * 1.03

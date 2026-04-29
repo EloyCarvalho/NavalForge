@@ -55,3 +55,4 @@ def test_heavier_mission_increases_displacement_resistance_and_power() -> None:
     assert heavy_result["estimated_displacement_kg"] > base_result["estimated_displacement_kg"]
     assert heavy_result["resistance_n"] > base_result["resistance_n"]
     assert heavy_result["power_kw"] > base_result["power_kw"]
+    assert heavy_result["power_kw"] >= base_result["power_kw"] * 1.02

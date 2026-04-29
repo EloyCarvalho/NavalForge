@@ -24,8 +24,10 @@ def test_warnings_reduce_score() -> None:
 
 def test_statuses_for_good_and_bad_cases() -> None:
     good = evaluate_design_result(required_power_kw=250.0, trim_deg=4.0, warnings=[])
+    high_power_good_score = evaluate_design_result(required_power_kw=400.0, trim_deg=4.0, warnings=[])
     bad = evaluate_design_result(required_power_kw=650.0, trim_deg=7.0, warnings=["High installed power"])
     assert good.status == "approved"
+    assert high_power_good_score.status == "approved_with_attention"
     assert bad.status in {"warning", "rejected"}
 
 
