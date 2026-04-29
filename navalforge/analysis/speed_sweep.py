@@ -46,7 +46,7 @@ def run_speed_sweep(
         results.append(
             SpeedSweepResult(
                 speed_knots=speed,
-                estimated_displacement_kg=float(raw["estimated_weight_kg"]),
+                estimated_displacement_kg=float(raw["estimated_displacement_kg"]),
                 resistance_n=float(raw["resistance_n"]),
                 required_power_kw=float(raw["power_kw"]),
                 trim_deg=float(raw["trim_deg"]),

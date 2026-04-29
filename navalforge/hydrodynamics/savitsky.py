@@ -52,7 +52,10 @@ class SavitskyModel:
         lift_coeff = data.displacement_kg * GRAVITY / (dynamic_pressure * wetted_area)
 
         resistance_coeff = 0.0058 + 0.0015 * froude_beam + 0.00008 * data.deadrise_deg
-        resistance_n = resistance_coeff * dynamic_pressure * wetted_area
+        # Add a lightweight load term to preserve monotonic behavior with displacement
+        # in this preliminary model (not a full Savitsky implementation).
+        load_factor = 1.0 + 0.65 * lift_coeff
+        resistance_n = resistance_coeff * dynamic_pressure * wetted_area * load_factor
 
         effective_power_w = resistance_n * speed_mps
         shaft_power_w = effective_power_w / 0.62

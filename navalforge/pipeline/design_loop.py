@@ -44,13 +44,13 @@ class DesignLoop:
     """First simplified engineering pipeline integrating mission, weight and hydrodynamics."""
 
     def run(self, mission: MissionInput) -> dict:
-        estimated_weight_kg = estimate_weight(mission)
+        estimated_displacement_kg = estimate_weight(mission)
 
         hull_input = PlaningHullInput(
             length_m=mission.length_m,
             beam_m=mission.beam_m,
             speed_knots=mission.target_speed_knots,
-            displacement_kg=estimated_weight_kg,
+            displacement_kg=estimated_displacement_kg,
         )
 
         hydro_result = SavitskyModel(hull_input).compute()
@@ -75,7 +75,8 @@ class DesignLoop:
         )
 
         return {
-            "estimated_weight_kg": estimated_weight_kg,
+            "estimated_displacement_kg": estimated_displacement_kg,
+            "estimated_weight_kg": estimated_displacement_kg,
             "resistance_n": hydro_result["resistance_n"],
             "power_kw": hydro_result["power_kw"],
             "trim_deg": trim,

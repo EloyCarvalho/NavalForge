@@ -28,3 +28,30 @@ def test_design_loop_integrates_savitsky_model() -> None:
     assert "resistance_n" in result
     assert "trim_deg" in result
     assert isinstance(result["warnings"], list)
+
+
+def test_heavier_mission_increases_displacement_resistance_and_power() -> None:
+    base = MissionInput(
+        length_m=8.0,
+        beam_m=2.6,
+        target_speed_knots=28.0,
+        passengers=6,
+        fuel_capacity_l=300.0,
+        material="fiberglass",
+    )
+    heavy = MissionInput(
+        length_m=8.0,
+        beam_m=2.6,
+        target_speed_knots=28.0,
+        passengers=10,
+        fuel_capacity_l=500.0,
+        material="fiberglass",
+    )
+
+    loop = DesignLoop()
+    base_result = loop.run(base)
+    heavy_result = loop.run(heavy)
+
+    assert heavy_result["estimated_displacement_kg"] > base_result["estimated_displacement_kg"]
+    assert heavy_result["resistance_n"] > base_result["resistance_n"]
+    assert heavy_result["power_kw"] > base_result["power_kw"]
