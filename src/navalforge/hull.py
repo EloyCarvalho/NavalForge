@@ -5,14 +5,6 @@ from .units import knots_to_ms
 
 @dataclass
 class Hull:
-    """Basic hull definition for preliminary naval architecture calculations.
-
-    Units:
-    - length/beam/draft/centers: m
-    - speed: knots
-    - displacement: kg
-    - angles: degrees
-    """
     name: str
     lwl: float
     beam: float
@@ -43,7 +35,7 @@ class Hull:
                 raise ValueError(f"{attr} must be in the interval (0, 1].")
         if self.vcg < 0:
             raise ValueError("vcg must not be negative in this simplified model.")
-        if self.propulsive_efficiency <= 0 or self.propulsive_efficiency > 1:
+        if not (0 < self.propulsive_efficiency <= 1):
             raise ValueError("propulsive_efficiency must be in (0, 1].")
 
     @property

@@ -24,6 +24,4 @@ def validate_design_inputs(hull: Hull) -> list[ValidationIssue]:
         issues.append(ValidationIssue("WARNING", "B/T", "B/T baixo para lancha típica; revisar calado/boca."))
     if hull.vcg > hull.beam:
         issues.append(ValidationIssue("WARNING", "VCG", "VCG elevado em relação à boca; estabilidade pode ser crítica."))
-    if hull.speed_knots > 25 and hull.deadrise_deg <= 0:
-        issues.append(ValidationIssue("WARNING", "deadrise", "Velocidade alta sem deadrise informado adequadamente."))
     return issues

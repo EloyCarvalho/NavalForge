@@ -22,8 +22,7 @@ class SavitskyScreeningResult:
 def savitsky_screening(hull: Hull, trim_deg: float | None = None) -> SavitskyScreeningResult:
     """Planing-craft screening inspired by Savitsky variables.
 
-    IMPORTANT: This is not a full validated Savitsky implementation.
-    Use as software scaffold and relative comparison only.
+    This is NOT a complete validated Savitsky implementation.
     """
     hull.validate()
     beta = radians(hull.deadrise_deg)
