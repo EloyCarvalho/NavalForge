@@ -1,0 +1,1 @@
+"""NavalForge naval calculation methods."""
