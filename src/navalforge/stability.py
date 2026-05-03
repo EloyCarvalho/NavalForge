@@ -15,11 +15,6 @@ class StabilityResult:
     def to_dict(self): return asdict(self)
 
 def estimate_initial_stability(hull: Hull) -> StabilityResult:
-    """Simplified initial transverse stability estimate.
-
-    Does not replace hydrostatic curves, GZ curve, loading manual, free-surface correction,
-    downflooding check, passenger criteria or applicable statutory criteria.
-    """
     hull.validate()
     vol = displaced_volume(hull)
     kb = 0.53 * hull.draft
@@ -28,10 +23,5 @@ def estimate_initial_stability(hull: Hull) -> StabilityResult:
     km = kb + bm
     gm = km - hull.vcg
     roll = 0.75 * hull.beam / (gm ** 0.5) if gm > 0 else None
-    if gm <= 0:
-        status = "CRITICAL"
-    elif gm < 0.35:
-        status = "LOW_MARGIN"
-    else:
-        status = "PRELIM_OK"
+    status = "CRITICAL" if gm <= 0 else ("LOW_MARGIN" if gm < 0.35 else "PRELIM_OK")
     return StabilityResult(kb, bm, km, gm, roll, status, "Estimativa inicial simplificada. Requer curvas hidrostáticas, GZ e critérios aplicáveis.")

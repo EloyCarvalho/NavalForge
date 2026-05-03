@@ -32,4 +32,4 @@ def estimate_displacement_resistance(hull: Hull, form_factor: float = 1.25, resi
     r = 0.5 * RHO_SEAWATER * hull.speed_ms**2 * s * ct
     pe = r * hull.speed_ms / 1000.0
     pb = pe / hull.propulsive_efficiency
-    return DisplacementResistanceResult(re, cf, s, r, pe, pb, "ITTC57_plus_preliminary_residual_coefficient", "Modelo preliminar de deslocamento; não é Holtrop-Mennen completo nem substitui ensaio/CFD.")
+    return DisplacementResistanceResult(re, cf, s, r, pe, pb, "ITTC57_plus_preliminary_residual_coefficient", "Modelo preliminar de deslocamento; não substitui Holtrop-Mennen, CFD, ensaio ou prova de mar.")

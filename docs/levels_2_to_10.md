@@ -1,42 +1,30 @@
-# NavalForge — Níveis 2 a 10 implementados no MVP
+# NavalForge — Níveis 2 a 10
 
 ## Nível 2 — Métodos navais separados
-- Regime: deslocante, semi-deslocante, planante.
-- Método preliminar de deslocamento baseado em ITTC57 + coeficiente residual simplificado.
-- Scaffold de Savitsky para triagem planante, explicitamente não validado como cálculo final.
+- Regime por Froude.
+- Resistência preliminar deslocante.
+- Scaffold Savitsky para triagem planante.
 
-## Nível 3 — Validação de dados
-- Checagens de L/B, B/T, VCG, coeficientes e eficiência propulsiva.
-- Alertas classificados em INFO, WARNING e ERROR.
+## Nível 3 — Validação
+- Checagens básicas de entrada e alertas.
 
-## Nível 4 — Avaliador técnico
-- Score preliminar.
-- Status: PRELIM_OK, REVIEW_REQUIRED ou CRITICAL.
-- Recomendações automáticas.
+## Nível 4 — Avaliador
+- Score, status, recomendações e limitações.
 
-## Nível 5 — Variantes e exploração do espaço de projeto
-- Geração de famílias de casco.
-- Comparação por score e potência.
-- Exportação CSV.
+## Nível 5 — Variantes
+- Geração e ranking de alternativas.
 
 ## Nível 6 — Relatórios
-- Relatório Markdown.
-- Relatório HTML.
-- Limitações e ressalvas técnicas incluídas.
+- Markdown e HTML.
 
 ## Nível 7 — Dashboard
-- Dashboard HTML com ranking das melhores variantes.
-- CSV auxiliar para curva de potência.
+- HTML simples com ranking.
 
-## Nível 8 — Persistência de projetos
-- Salvar e carregar casco em JSON.
-- Exemplo em data/projects.
+## Nível 8 — Persistência
+- JSON.
 
-## Nível 9 — CLI profissional
-- Comandos evaluate, variants, save e load-evaluate.
-- Parâmetros técnicos via terminal.
+## Nível 9 — CLI
+- evaluate, variants, save e load-evaluate.
 
-## Nível 10 — Base para produto com IA
-- Regras de assistente técnico.
-- Estrutura pronta para interface Flet/NiceGUI/FastAPI.
-- GitHub Actions e testes automatizados.
+## Nível 10 — Base IA
+- Regras e estrutura para expansão.

@@ -15,9 +15,7 @@ class HydrostaticsResult:
     froude_number: float
     length_beam_ratio: float
     beam_draft_ratio: float
-
-    def to_dict(self):
-        return asdict(self)
+    def to_dict(self): return asdict(self)
 
 def displaced_volume(hull: Hull) -> float:
     hull.validate()
@@ -26,7 +24,6 @@ def displaced_volume(hull: Hull) -> float:
     return hull.lwl * hull.beam * hull.draft * hull.cb
 
 def displacement_mass(hull: Hull, rho: float = RHO_SEAWATER) -> float:
-    hull.validate()
     if hull.displacement_kg is not None:
         return hull.displacement_kg
     return displaced_volume(hull) * rho

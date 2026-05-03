@@ -8,28 +8,16 @@
 
 ```bash
 python -m venv .venv
-# Windows
 .venv\Scripts\activate
-# Linux/Mac
-# source .venv/bin/activate
-pip install -e .
+pip install -e .[dev]
 ```
 
-## Rodar caso único
+## Rodar
 
 ```bash
+pytest
 python examples/run_single_case.py
-```
-
-## Gerar variantes
-
-```bash
 python examples/run_variants.py
-```
-
-## Dashboard
-
-```bash
 python examples/generate_dashboard.py
 ```
 
@@ -42,13 +30,6 @@ navalforge save --name Lancha_12m --out data/projects/lancha_12m_saved.json
 navalforge load-evaluate data/projects/lancha_12m.json
 ```
 
-## Testes
+## Arquitetura
 
-```bash
-pip install -e .[dev]
-pytest
-```
-
-## O que foi implementado — níveis 2 a 10
-
-Veja `docs/levels_2_to_10.md`.
+A arquitetura oficial agora é `src/navalforge/`. A estrutura antiga de pacote na raiz foi removida para evitar duplicidade.
