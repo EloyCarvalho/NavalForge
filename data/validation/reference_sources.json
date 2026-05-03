@@ -1,0 +1,41 @@
+[
+  {
+    "source_id": "DSYHS_1981_GERRITSMA_ONNINK_VERSLUIS",
+    "title": "Geometry, resistance and stability of the Delft systematic yacht hull series",
+    "authors": "J. Gerritsma; R. Onnink; A. Versluis",
+    "year": 1981,
+    "publisher_or_journal": "International Shipbuilding Progress, Volume 28, Issue 328",
+    "doi_or_identifier": "10.3233/ISP-1981-2832801",
+    "url": "https://journals.sagepub.com/doi/10.3233/ISP-1981-2832801",
+    "data_type": ["resistance", "stability", "geometry"],
+    "vessel_family": "Delft Systematic Yacht Hull Series",
+    "source_status": "public bibliographic source; numeric extraction required",
+    "notes": "Original DSYHS publication. Abstract states resistance and stability were determined for 22 systematically varied yacht hull forms. Numeric tables must be extracted or imported before automated validation."
+  },
+  {
+    "source_id": "DSYHS_2025_TUDELFT_4TU_DATASET",
+    "title": "Data underlying the publication: Data-Driven Models for Yacht Hull Resistance Optimization: Exploring Geometric Parameters Beyond the Boundaries of the Delft Systematic Yacht Hull Series",
+    "authors": "J. M. Walker; A. Coraddu; Luca Oneto",
+    "year": 2025,
+    "publisher_or_journal": "TU Delft - 4TU.ResearchData",
+    "doi_or_identifier": "10.4121/b4bfbbaf-63e9-4d37-8b88-5cb56be1ba2e",
+    "url": "https://research.tudelft.nl/en/datasets/data-underlying-the-publication-data-driven-models-for-yacht-hull/",
+    "data_type": ["resistance", "geometry_descriptors", "hydrostatics", "operating_conditions"],
+    "vessel_family": "Delft Systematic Yacht Hull Series",
+    "source_status": "public dataset catalog; dataset import required",
+    "notes": "Dataset description states it includes hydrodynamic resistance data, geometric descriptors, hydrostatics, operating conditions such as Froude number, and resistance results."
+  },
+  {
+    "source_id": "DSYHS_RAW_2022_FIGSHARE_4TU",
+    "title": "Delft Systematic Yacht Hull Series RAW coefficients data",
+    "authors": "Jasper den Ouden",
+    "year": 2022,
+    "publisher_or_journal": "Figshare / 4TU.ResearchData",
+    "doi_or_identifier": "figshare dataset 21501423",
+    "url": "https://figshare.com/articles/dataset/Delft_Systematic_Yacht_Hull_Series_RAW_coefficients_data/21501423",
+    "data_type": ["added_resistance_coefficients", "waves", "DSYHS"],
+    "vessel_family": "Delft Systematic Yacht Hull Series",
+    "source_status": "public dataset catalog; optional future module",
+    "notes": "Useful later for added resistance in waves. Not used yet for calm-water validation."
+  }
+]
