@@ -33,3 +33,7 @@ navalforge load-evaluate data/projects/lancha_12m.json
 ## Arquitetura
 
 A arquitetura oficial agora é `src/navalforge/`. A estrutura antiga de pacote na raiz foi removida para evitar duplicidade.
+
+## Validação
+
+O projeto possui workflow de testes em `.github/workflows/tests.yml` para validar instalação e execução de `pytest`.
