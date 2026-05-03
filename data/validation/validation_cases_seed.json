@@ -1,0 +1,42 @@
+[
+  {
+    "case_id": "DSYHS_1981_PLACEHOLDER_RESISTANCE",
+    "source_id": "DSYHS_1981_GERRITSMA_ONNINK_VERSLUIS",
+    "case_name": "Delft Systematic Yacht Hull Series resistance case placeholder",
+    "validation_domain": "resistance",
+    "geometry_reference": "DSYHS hull form to be imported from source table or offset file",
+    "operating_condition": {
+      "froude_number": null,
+      "speed_knots": null,
+      "displacement_kg": null
+    },
+    "expected_results": {
+      "resistance_n": null,
+      "resistance_coefficient": null,
+      "brake_power_kw": null
+    },
+    "tolerance_percent": 10.0,
+    "status": "metadata_only_pending_numeric_import",
+    "notes": "Do not use for pass/fail until numeric source data is imported and reviewed."
+  },
+  {
+    "case_id": "DSYHS_2025_DATASET_RESISTANCE_IMPORT_TARGET",
+    "source_id": "DSYHS_2025_TUDELFT_4TU_DATASET",
+    "case_name": "TU Delft DSYHS dataset resistance import target",
+    "validation_domain": "resistance",
+    "geometry_reference": "Dataset geometry descriptors and hydrostatics",
+    "operating_condition": {
+      "froude_number": null,
+      "speed_knots": null,
+      "displacement_kg": null
+    },
+    "expected_results": {
+      "resistance_n": null,
+      "resistance_coefficient": null,
+      "brake_power_kw": null
+    },
+    "tolerance_percent": 10.0,
+    "status": "metadata_only_pending_dataset_download",
+    "notes": "The public dataset catalog identifies usable data, but numeric data must be imported separately before validation."
+  }
+]
