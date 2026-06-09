@@ -1,0 +1,14 @@
+[project]
+name = "navalforge-similar-vessels-r0"
+version = "0.1.0"
+description = "Motor Python NavalForge para benchmark preliminar por embarcacoes semelhantes."
+requires-python = ">=3.10"
+authors = [{name = "Eloy Carvalho / NavalForge"}]
+readme = "README.md"
+dependencies = []
+
+[project.scripts]
+navalforge-similar-vessels = "navalforge_benchmark.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["navalforge_benchmark*"]
