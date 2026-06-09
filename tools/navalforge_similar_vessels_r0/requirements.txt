@@ -1,0 +1,2 @@
+# R0 sem dependências externas obrigatórias.
+# O leitor XLSX mínimo usa apenas biblioteca padrão Python.
