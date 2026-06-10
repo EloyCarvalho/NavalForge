@@ -1,0 +1,13 @@
+{
+  "arquivo": "navalforge_embarcacoes_semelhantes_r0.csv",
+  "fonte_xlsx": "NavalForge_Banco_Geral_Embarcacoes_4a20m_v119_teste_real_aplicado_1000_fichas.xlsx",
+  "aba": "Fichas_Reais_v31_v100",
+  "linhas_total_incluindo_cabecalho": 1001,
+  "registros_dados": 1000,
+  "colunas": 69,
+  "tamanho_bytes": 806931,
+  "sha256": "8c0637dd0301ee4a52c265c8afe20746bfdfe22c55534989eb2d9e61ac2d720d",
+  "encoding": "utf-8-sig",
+  "gerado_em": "2026-06-10",
+  "escopo": "Banco NavalForge de embarcacoes semelhantes R0, 4 m a 20 m, para benchmark preliminar."
+}
