@@ -1,0 +1,10 @@
+{
+  "nome": "DGS/FRB 8,5 m - exemplo",
+  "loa_m": 8.5,
+  "b_m": 2.8,
+  "grupo_navalforge": "RIB / Inflável rígido",
+  "material_normalizado": "RIB/GRP+tubo",
+  "propulsao_normalizada": "motor de popa",
+  "regime_principal": "Planante",
+  "uso": "SAR / rescue / patrulha"
+}
